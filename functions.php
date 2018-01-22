@@ -7,6 +7,8 @@
  * @package my-unyson-theme
  */
 
+define('TDOMAIN', 'my-unyson-theme');
+
 if ( ! function_exists( 'my_unyson_theme_setup' ) ) :
 	/**
 	 * Sets up theme defaults and registers support for various WordPress features.
@@ -22,7 +24,7 @@ if ( ! function_exists( 'my_unyson_theme_setup' ) ) :
 		 * If you're building a theme based on my-unyson-theme, use a find and replace
 		 * to change 'my-unyson-theme' to the name of your theme in all the template files.
 		 */
-		load_theme_textdomain( 'my-unyson-theme', get_template_directory() . '/languages' );
+		load_theme_textdomain( TDOMAIN, get_template_directory() . '/languages' );
 
 		// Add default posts and comments RSS feed links to head.
 		add_theme_support( 'automatic-feed-links' );
@@ -157,4 +159,32 @@ if ( defined( 'JETPACK__VERSION' ) ) {
 }
 
 require get_template_directory() . '/tgm-plugin-activation/mut-tgm-plugin-activation.php';
+
+function add_plugin_styles() {
+    if( ! defined( 'FW' ) ) {
+        return ;
+    }
+    
+    $option_value = fw_get_db_customizer_option('body-color');
+    
+    echo '<style type="text/css">'
+            . 'body {'
+                . 'border: 30px solid ' . esc_html($option_value).';'
+            . '}'
+        . ' </style>';
+    global $post;
+    if( ! $post || $post->post_type != 'post' ) {
+        return ;
+    } else {
+        $option_value = fw_get_db_post_option( $post -> ID, 'body-color');
+        echo '<style type="text/css">'
+            . 'body {'
+                . 'border: 30px solid ' . esc_html($option_value).';'
+            . '}'
+        . ' </style>';
+    }
+    
+}
+
+add_action('wp_print_styles', 'add_plugin_styles');
 
